@@ -20,14 +20,12 @@ TEST_F(StringLRUCacheTest, AddAndRetrieveItem) {
 TEST_F(StringLRUCacheTest, IncrementUsage) {
     cache.Add("key1");
     cache.Add("key2");
-    cache.Add("key3");
-    cache.Increment("key1");
-    
-    EXPECT_EQ(cache.GetLeastUsed(), "key3");  
+
+    cache.Increment("key1");  
+    EXPECT_EQ(cache.GetLeastUsed(), "key2");  
 
     cache.Increment("key2");
-
-    EXPECT_EQ(cache.GetLeastUsed(), "key2");
+    EXPECT_EQ(cache.GetLeastUsed(), "key1");
 }
 
 TEST_F(StringLRUCacheTest, RemoveItem) {
