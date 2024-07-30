@@ -52,8 +52,6 @@ private:
 
     void removeLeastPopularBooks()
     {
-        std::lock_guard<std::mutex> lock(libraryMutex);
-
         while (!books.empty() && books.size() > capacity)
         {
             auto leastPopularBookISBN = lruCache.GetLeastUsed();
@@ -75,14 +73,36 @@ public:
 
     void addBook(const Book &book)
     {
+        std::cout << "Adding book " << book.isbn<< std::endl;
         std::lock_guard<std::mutex> lock(libraryMutex);
         auto isbn = book.isbn;
+
+        // Check if the book with the same ISBN already exists
+        if (books.find(isbn) != books.end())
+        {
+            std::cout << "A book with the " << isbn << " already exists."<< std::endl;
+            return;
+        }
+
+        // Check if a book with the same title already exists (assuming unique titles for simplicity)
+        for (const auto &[key, existingBook] : books)
+        {
+            if (existingBook.title == book.title)
+            {
+                std::cout << "A book with the title " << book.title << " already exists."<< std::endl;
+                return;
+            }
+        }
+
+        // Add the book to the library
         books[isbn] = book;
-        borrowedBooks[isbn] = false;
+        borrowedBooks[isbn] = false; // Initialize as not borrowed
+        std::cout << "Added book " << book.isbn<< std::endl;
     }
 
     void removeBook(const std::string &isbn)
     {
+        std::cout << "Removing: " << isbn<< std::endl;
         std::lock_guard<std::mutex> lock(libraryMutex);
         books.erase(isbn);
         borrowedBooks.erase(isbn);

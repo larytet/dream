@@ -18,10 +18,10 @@ void addBook(BookLibrary &library)
     std::cin.ignore(); // Ignore remaining newline character
 
     library.addBook(Book(title, author, isbn, year));
-    std::cout << "Book added successfully.\n";
+    std::cout << "Book added successfully"<< std::endl;
 }
 
-void subscribeToLibrary(BookLibrary &library)
+void borrowBook(BookLibrary &library)
 {
     std::string isbn;
     std::cout << "Enter ISBN of the book to subscribe: ";
@@ -37,27 +37,27 @@ void subscribeToLibrary(BookLibrary &library)
         }
         else
         {
-            std::cout << "Failed to borrow the book (maybe it's already borrowed).\n";
+            std::cout << "Failed to borrow the book (maybe it's already borrowed)."<< std::endl;
         }
     }
     else
     {
-        std::cout << "No book found with the given ISBN.\n";
+        std::cout << "No book found with the given ISBN."<< std::endl;
     }
 }
 
 void printMenu()
 {
-    std::cout << "\nMenu:\n";
-    std::cout << "1. Add Book\n";
-    std::cout << "2. Subscribe (Borrow Book)\n";
-    std::cout << "3. Exit\n";
+    std::cout << std::endl<< "Menu:"<< std::endl;
+    std::cout << "1. Add Book"<< std::endl;
+    std::cout << "2. Subscribe (Borrow Book)"<< std::endl;
+    std::cout << "3. Exit"<< std::endl;
     std::cout << "Enter your choice: ";
 }
 
 int main()
 {
-    BookLibrary library(10);
+    BookLibrary library(1);
 
     while (true)
     {
@@ -73,14 +73,14 @@ int main()
             addBook(library);
             break;
         case 2:
-            subscribeToLibrary(library);
+            borrowBook(library);
             break;
         case 3:
-            std::cout << "Exiting...\n";
+            std::cout << "Exiting..." << std::endl;
             library.stopSweep();
             return 0;
         default:
-            std::cout << "Invalid choice. Please try again.\n";
+            std::cout << "Invalid choice. Please try again" <<std::endl;
         }
 
         // Print the status report after each action
