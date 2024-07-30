@@ -63,6 +63,27 @@ void returnBook(BookLibrary &library)
     }
 }
 
+void findBook(BookLibrary &library)
+{
+    std::string key;
+    std::cout << "Enter ISBN or title of the book: ";
+    std::getline(std::cin, key);
+
+    auto book = library.lookupByIsbn(key);
+    if (book == nullptr)
+    {
+        book = library.lookupByTitle(key);
+    }
+
+    if (book == nullptr)
+    {
+        std::cout << "Book not found: " << key << std::endl;
+        return;
+    }
+
+    std::cout << "Book found: ISBN " << book->isbn << ", Title " << book->title << std::endl;
+}
+
 void printMenu()
 {
     std::cout << std::endl
@@ -71,7 +92,8 @@ void printMenu()
     std::cout << "2. Borrow Book" << std::endl;
     std::cout << "3. Return Book" << std::endl;
     std::cout << "4. Report" << std::endl;
-    std::cout << "5. Exit" << std::endl;
+    std::cout << "5. Find" << std::endl;
+    std::cout << "6. Exit" << std::endl;
     std::cout << "Enter your choice: ";
 }
 
@@ -102,6 +124,9 @@ int main()
             library.statusReport();
             break;
         case 5:
+            findBook(library);
+            break;
+        case 6:
             std::cout << "Exiting..." << std::endl;
             library.stopSweep();
             return 0;
