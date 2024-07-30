@@ -20,11 +20,11 @@ void addBook(BookLibrary &library)
     auto res = library.addBook(Book(title, author, isbn, year));
     if (res == Result::BookAdded)
     {
-        std::cout << "Book " << isbn << " added successfully" << std::endl;
+        std::cout << "Book ISBN=" << isbn << " added successfully" << std::endl;
     }
     else
     {
-        std::cout << "Error " << isbn << " " << ResultToString(res) << std::endl;
+        std::cout << "Error ISBN=" << isbn << " " << ResultToString(res) << std::endl;
     }
 }
 
@@ -37,12 +37,12 @@ void borrowBook(BookLibrary &library)
     auto res = library.borrowBook(isbn);
     if (res == Result::BookBorrowed)
     {
-        std::cout << "Borrowed book: " << isbn << std::endl;
+        std::cout << "Borrowed book: ISBN=" << isbn << std::endl;
         return;
     }
     else
     {
-        std::cout << "Error " << isbn << " " << ResultToString(res) << std::endl;
+        std::cout << "Error ISBN=" << isbn << " " << ResultToString(res) << std::endl;
     }
 }
 
@@ -55,11 +55,11 @@ void returnBook(BookLibrary &library)
     auto res = library.returnBook(isbn);
     if (res == Result::BookReturned)
     {
-        std::cout << "Returned book: " << isbn << std::endl;
+        std::cout << "Returned book: ISBN=" << isbn << std::endl;
     }
     else
     {
-        std::cout << "Error " << isbn << " " << ResultToString(res) << std::endl;
+        std::cout << "Error ISBN=" << isbn << " " << ResultToString(res) << std::endl;
     }
 }
 
@@ -77,7 +77,7 @@ void printMenu()
 
 int main()
 {
-    BookLibrary library(1);
+    BookLibrary library(3);
 
     while (true)
     {

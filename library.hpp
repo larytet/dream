@@ -31,6 +31,7 @@ enum class Result
     ISBNAlreadyExists,
     BookAdded,
     BookBorrowed,
+    BookAlreadyBorrowed,
     BookNotBorrowed,
     BookReturned,
     ISBNMissing,
@@ -48,6 +49,8 @@ static std::string ResultToString(Result result)
         return "Book added";
     case Result::BookBorrowed:
         return "Book borrowed";
+    case Result::BookAlreadyBorrowed:
+        return "Book already borrowed";
     case Result::BookNotBorrowed:
         return "Book not borrowed";
     case Result::BookReturned:
@@ -180,7 +183,7 @@ public:
 
         if (borrowedBooks[isbn])
         {
-            return Result::BookBorrowed;
+            return Result::BookAlreadyBorrowed;
         }
 
         borrowedBooks[isbn] = true;
