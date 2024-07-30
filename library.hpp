@@ -25,42 +25,54 @@ public:
         : title(t), author(a), isbn(i), publishedYear(y) {}
 };
 
-enum class Result
+namespace Result
 {
-    TitleAlreadyExists,
-    ISBNAlreadyExists,
-    BookAdded,
-    BookBorrowed,
-    BookAlreadyBorrowed,
-    BookNotBorrowed,
-    BookReturned,
-    ISBNMissing,
-};
-
-static std::string ResultToString(Result result)
-{
-    switch (result)
+    enum class Value
     {
-    case Result::TitleAlreadyExists:
-        return "Title Already exists";
-    case Result::ISBNAlreadyExists:
-        return "ISBN already exists";
-    case Result::BookAdded:
-        return "Book added";
-    case Result::BookBorrowed:
-        return "Book borrowed";
-    case Result::BookAlreadyBorrowed:
-        return "Book already borrowed";
-    case Result::BookNotBorrowed:
-        return "Book not borrowed";
-    case Result::BookReturned:
-        return "Book returned";
-    case Result::ISBNMissing:
-        return "ISBN missing";
+        TitleAlreadyExists,
+        ISBNAlreadyExists,
+        BookAdded,
+        BookBorrowed,
+        BookAlreadyBorrowed,
+        BookNotBorrowed,
+        BookReturned,
+        ISBNMissing,
+    };
+
+    // Convert Result enum to string
+    std::string ToString(Value value)
+    {
+        switch (value)
+        {
+        case Value::TitleAlreadyExists:
+            return "Title Already exists";
+        case Value::ISBNAlreadyExists:
+            return "ISBN already exists";
+        case Value::BookAdded:
+            return "Book added";
+        case Value::BookBorrowed:
+            return "Book borrowed";
+        case Value::BookAlreadyBorrowed:
+            return "Book already borrowed";
+        case Value::BookNotBorrowed:
+            return "Book not borrowed";
+        case Value::BookReturned:
+            return "Book returned";
+        case Value::ISBNMissing:
+            return "ISBN missing";
+        default:
+            return "Unknown result " + std::to_string(static_cast<int>(value));
+        }
     }
 
-    return "Unknown result " + std::to_string(static_cast<int>(result));
+    // Overload the << operator to output Result directly to std::ostream
+    std::ostream& operator<<(std::ostream& os, const Value& value)
+    {
+        os << ToString(value);
+        return os;
+    }
 }
+
 
 class BookLibrary
 {
@@ -115,7 +127,7 @@ public:
         stopFlag = true;
     }
 
-    Result addBook(const Book &book)
+    Result::Value addBook(const Book &book)
     {
         std::lock_guard<std::mutex> lock(libraryMutex);
 
@@ -124,7 +136,7 @@ public:
         if (books.find(isbn) != books.end())
         {
             std::cout << "A book with the " << isbn << " already exists." << std::endl;
-            return Result::ISBNAlreadyExists;
+            return Result::Value::ISBNAlreadyExists;
         }
 
         // Check if a book with the same title already exists (assuming unique titles for simplicity)
@@ -133,7 +145,7 @@ public:
             if (existingBook.title == book.title)
             {
                 std::cout << "A book with the title " << book.title << " already exists." << std::endl;
-                return Result::TitleAlreadyExists;
+                return Result::Value::TitleAlreadyExists;
             }
         }
 
@@ -145,7 +157,7 @@ public:
         // Trigger the sweep
         cv.notify_one();
 
-        return Result::BookAdded;
+        return Result::Value::BookAdded;
     }
 
     Book *lookupByTitle(const std::string &title)
@@ -175,42 +187,42 @@ public:
         return nullptr;
     }
 
-    Result borrowBook(const std::string &isbn)
+    Result::Value borrowBook(const std::string &isbn)
     {
         std::lock_guard<std::mutex> lock(libraryMutex);
 
         if (books.find(isbn) == books.end())
         {
-            return Result::ISBNMissing;
+            return Result::Value::ISBNMissing;
         }
 
         if (borrowedBooks[isbn])
         {
-            return Result::BookAlreadyBorrowed;
+            return Result::Value::BookAlreadyBorrowed;
         }
 
         borrowedBooks[isbn] = true;
         lruCache.Increment(isbn);
 
-        return Result::BookBorrowed;
+        return Result::Value::BookBorrowed;
     }
 
-    Result returnBook(const std::string &isbn)
+    Result::Value returnBook(const std::string &isbn)
     {
         std::lock_guard<std::mutex> lock(libraryMutex);
 
         if (books.find(isbn) == books.end())
         {
-            return Result::ISBNMissing;
+            return Result::Value::ISBNMissing;
         }
 
         if (!borrowedBooks[isbn])
         {
-            return Result::BookNotBorrowed;
+            return Result::Value::BookNotBorrowed;
         }
         borrowedBooks[isbn] = false;
 
-        return Result::BookReturned;
+        return Result::Value::BookReturned;
     }
 
     void statusReport()

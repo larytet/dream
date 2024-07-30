@@ -18,13 +18,13 @@ void addBook(BookLibrary &library)
     std::cin.ignore(); // Ignore remaining newline character
 
     auto res = library.addBook(Book(title, author, isbn, year));
-    if (res == Result::BookAdded)
+    if (res == Result::Value::BookAdded)
     {
         std::cout << "Book ISBN=" << isbn << " added successfully" << std::endl;
     }
     else
     {
-        std::cout << "Error ISBN=" << isbn << " " << ResultToString(res) << std::endl;
+        std::cout << "Error ISBN=" << isbn << " " << res << std::endl;
     }
 }
 
@@ -35,14 +35,14 @@ void borrowBook(BookLibrary &library)
     std::getline(std::cin, isbn);
 
     auto res = library.borrowBook(isbn);
-    if (res == Result::BookBorrowed)
+    if (res == Result::Value::BookBorrowed)
     {
         std::cout << "Borrowed book: ISBN=" << isbn << std::endl;
         return;
     }
     else
     {
-        std::cout << "Error ISBN=" << isbn << " " << ResultToString(res) << std::endl;
+        std::cout << "Error ISBN=" << isbn << " " << res << std::endl;
     }
 }
 
@@ -53,13 +53,13 @@ void returnBook(BookLibrary &library)
     std::getline(std::cin, isbn);
 
     auto res = library.returnBook(isbn);
-    if (res == Result::BookReturned)
+    if (res == Result::Value::BookReturned)
     {
         std::cout << "Returned book: ISBN=" << isbn << std::endl;
     }
     else
     {
-        std::cout << "Error ISBN=" << isbn << " " << ResultToString(res) << std::endl;
+        std::cout << "Error ISBN=" << isbn << " " << res << std::endl;
     }
 }
 
