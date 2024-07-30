@@ -24,26 +24,42 @@ void addBook(BookLibrary &library)
 void borrowBook(BookLibrary &library)
 {
     std::string isbn;
-    std::cout << "Enter ISBN of the book to subscribe: ";
+    std::cout << "Enter ISBN of the book to borrow: ";
     std::getline(std::cin, isbn);
 
     Book *book = library.lookupByIsbn(isbn);
-    if (book)
-    {
-        std::cout << "Found book: " << book->title << " by " << book->author << std::endl;
-        if (library.borrowBook(isbn))
-        {
-            std::cout << "Borrowed book: " << book->title << std::endl;
-        }
-        else
-        {
-            std::cout << "Failed to borrow the book (maybe it's already borrowed)." << std::endl;
-        }
-    }
-    else
+    if (!book)
     {
         std::cout << "No book found with the given ISBN." << std::endl;
+        return;
     }
+    if (!library.borrowBook(isbn))
+    {
+        std::cout << "Failed to borrow the book (maybe it's already borrowed)." << std::endl;
+        return;
+    }
+    std::cout << "Borrowed book: " << book->title << std::endl;
+}
+
+void returnBook(BookLibrary &library)
+{
+    std::string isbn;
+    std::cout << "Enter ISBN of the book to return: ";
+    std::getline(std::cin, isbn);
+
+    Book *book = library.lookupByIsbn(isbn);
+    if (!book)
+    {
+        std::cout << "No book found with the ISBN " << isbn << std::endl;
+        return;
+    }
+    if (!library.borrowBook(isbn))
+    {
+        std::cout << "The book: " << book->title << " isn't borrowed" << std::endl;
+        return;
+    }
+
+    std::cout << "Return book: " << isbn << std::endl;
 }
 
 void printMenu()
@@ -51,9 +67,10 @@ void printMenu()
     std::cout << std::endl
               << "Menu:" << std::endl;
     std::cout << "1. Add Book" << std::endl;
-    std::cout << "2. Subscribe (Borrow Book)" << std::endl;
-    std::cout << "3. Report" << std::endl;
-    std::cout << "4. Exit" << std::endl;
+    std::cout << "2. Borrow Book" << std::endl;
+    std::cout << "3. Return Book" << std::endl;
+    std::cout << "4. Report" << std::endl;
+    std::cout << "5. Exit" << std::endl;
     std::cout << "Enter your choice: ";
 }
 
@@ -78,9 +95,12 @@ int main()
             borrowBook(library);
             break;
         case 3:
-            library.statusReport();
+            returnBook(library);
             break;
         case 4:
+            library.statusReport();
+            break;
+        case 5:
             std::cout << "Exiting..." << std::endl;
             library.stopSweep();
             return 0;
