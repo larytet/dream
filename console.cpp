@@ -77,7 +77,7 @@ int main()
             break;
         case 3:
             std::cout << "Exiting...\n";
-            library.stopBookSweep();
+            library.stopSweep();
             return 0;
         default:
             std::cout << "Invalid choice. Please try again.\n";

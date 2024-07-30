@@ -34,7 +34,7 @@ private:
     size_t capacity;
     std::atomic<bool> stopFlag; // Atomic flag to signal stopping
 
-    void bookSweep()
+    void sweep()
     {
         while (!stopFlag)
         {
@@ -51,10 +51,10 @@ private:
 public:
     BookLibrary(size_t cap) : capacity(cap), stopFlag(false)
     {
-        std::thread(&BookLibrary::bookSweep, this).detach();
+        std::thread(&BookLibrary::sweep, this).detach();
     }
 
-    void stopBookSweep()
+    void stopSweep()
     {
         // Signal the thread to stop
         stopFlag = true;
