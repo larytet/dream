@@ -56,5 +56,5 @@ g++ console.cpp -o console
 ```bash
 cd test
 camke .
-cmake --build .;./LRUCacheTest
+cmake --build .;gdb ./LRUCacheTest
 ```
