@@ -1,0 +1,12 @@
+# Ignore console output (if any)
+console
+
+# Ignore CMake-related files and directories
+test/CMakeCache.txt
+test/CMakeFiles/
+test/CTestTestfile.cmake
+test/LRUCacheTest
+test/Makefile
+test/_deps/
+test/cmake_install.cmake
+test/lib/
