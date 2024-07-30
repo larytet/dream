@@ -18,7 +18,7 @@ void addBook(BookLibrary &library)
     std::cin.ignore(); // Ignore remaining newline character
 
     library.addBook(Book(title, author, isbn, year));
-    std::cout << "Book added successfully"<< std::endl;
+    std::cout << "Book added successfully" << std::endl;
 }
 
 void borrowBook(BookLibrary &library)
@@ -37,22 +37,23 @@ void borrowBook(BookLibrary &library)
         }
         else
         {
-            std::cout << "Failed to borrow the book (maybe it's already borrowed)."<< std::endl;
+            std::cout << "Failed to borrow the book (maybe it's already borrowed)." << std::endl;
         }
     }
     else
     {
-        std::cout << "No book found with the given ISBN."<< std::endl;
+        std::cout << "No book found with the given ISBN." << std::endl;
     }
 }
 
 void printMenu()
 {
-    std::cout << std::endl<< "Menu:"<< std::endl;
-    std::cout << "1. Add Book"<< std::endl;
-    std::cout << "2. Subscribe (Borrow Book)"<< std::endl;
-    std::cout << "3. Report"<< std::endl;
-    std::cout << "4. Exit"<< std::endl;
+    std::cout << std::endl
+              << "Menu:" << std::endl;
+    std::cout << "1. Add Book" << std::endl;
+    std::cout << "2. Subscribe (Borrow Book)" << std::endl;
+    std::cout << "3. Report" << std::endl;
+    std::cout << "4. Exit" << std::endl;
     std::cout << "Enter your choice: ";
 }
 
@@ -84,7 +85,7 @@ int main()
             library.stopSweep();
             return 0;
         default:
-            std::cout << "Invalid choice. Please try again" <<std::endl;
+            std::cout << "Invalid choice. Please try again" << std::endl;
         }
     }
 

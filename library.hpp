@@ -86,7 +86,7 @@ public:
         // Check if the book with the same ISBN already exists
         if (books.find(isbn) != books.end())
         {
-            std::cout << "A book with the " << isbn << " already exists."<< std::endl;
+            std::cout << "A book with the " << isbn << " already exists." << std::endl;
             return;
         }
 
@@ -95,7 +95,7 @@ public:
         {
             if (existingBook.title == book.title)
             {
-                std::cout << "A book with the title " << book.title << " already exists."<< std::endl;
+                std::cout << "A book with the title " << book.title << " already exists." << std::endl;
                 return;
             }
         }
@@ -104,7 +104,7 @@ public:
         books[isbn] = book;
         borrowedBooks[isbn] = false; // Initialize as not borrowed
         lruCache.Add(isbn);
-        std::cout << "Added book " << book.isbn<< std::endl;
+        std::cout << "Added book " << book.isbn << std::endl;
     }
 
     Book *lookupByTitle(const std::string &title)
