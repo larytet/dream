@@ -50,6 +50,7 @@ public:
     // Get the least used key
     KeyType GetLeastUsed() const {
         std::lock_guard<std::mutex> lock(mutex);
+
         if (list.empty()) {
             throw std::runtime_error("Cache is empty");
         }
