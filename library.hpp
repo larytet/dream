@@ -10,6 +10,8 @@
 
 #include <string>
 
+#include "lruCache.hpp"
+
 class Book
 {
 public:
@@ -17,7 +19,6 @@ public:
     std::string author;
     std::string isbn;
     int publishedYear;
-    int borrowedCount;
 
     Book() {}
     Book(std::string t, std::string a, std::string i, int y)
@@ -33,6 +34,7 @@ private:
     std::condition_variable cv;
     size_t capacity;
     std::atomic<bool> stopFlag; // Atomic flag to signal stopping
+    LRUCache<std::string> lruCache;
 
     void sweep()
     {
@@ -43,8 +45,19 @@ private:
             if (cv.wait_for(lock, std::chrono::seconds(1), [this]
                             { return books.size() > capacity; }))
             {
-                // Condition met, remove least popular book
+                removeLeastPopularBooks();
             }
+        }
+    }
+
+    void removeLeastPopularBooks()
+    {
+        std::lock_guard<std::mutex> lock(libraryMutex);
+
+        while (!books.empty() && books.size() > capacity)
+        {
+            auto leastPopularBookISBN = lruCache.GetLeastUsed();
+            removeBook(leastPopularBookISBN);
         }
     }
 
@@ -104,7 +117,6 @@ public:
         if (books.find(isbn) != books.end() && !borrowedBooks[isbn])
         {
             borrowedBooks[isbn] = true;
-            books[isbn].borrowedCount++;
             return true;
         }
         return false;
