@@ -12,6 +12,7 @@ public:
     // Increment usage counter of a key
     void Increment(const KeyType& key) {
         std::lock_guard<std::mutex> lock(mutex);
+
         auto it = cacheMap.find(key);
         if (it == cacheMap.end()) {
             throw std::runtime_error("Key not found");
