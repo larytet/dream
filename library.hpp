@@ -25,6 +25,41 @@ public:
         : title(t), author(a), isbn(i), publishedYear(y) {}
 };
 
+enum class Result
+{
+    TitleAlreadyExists,
+    ISBNAlreadyExists,
+    BookAdded,
+    BookBorrowed,
+    BookNotBorrowed,
+    BookReturned,
+    ISBNMissing,
+};
+
+
+static std::string ResultToString(Result result)
+{
+    switch (result)
+    {
+    case Result::TitleAlreadyExists:
+        return "Title Already exists";
+    case Result::ISBNAlreadyExists:
+        return "ISBN already exists";
+    case Result::BookAdded:
+        return "Book added";
+    case Result::BookBorrowed:
+        return "Book borrowed";
+    case Result::BookNotBorrowed:
+        return "Book not borrowed";
+    case Result::BookReturned:
+        return "Book returned";
+    case Result::ISBNMissing:
+        return "ISBN missing";
+    }
+
+    return "Unknown result " + std::to_string(static_cast<int>(result));
+}
+
 class BookLibrary
 {
 private:
@@ -78,16 +113,16 @@ public:
         stopFlag = true;
     }
 
-    void addBook(const Book &book)
+    Result addBook(const Book &book)
     {
         std::lock_guard<std::mutex> lock(libraryMutex);
-        auto isbn = book.isbn;
 
+        auto isbn = book.isbn;
         // Check if the book with the same ISBN already exists
         if (books.find(isbn) != books.end())
         {
             std::cout << "A book with the " << isbn << " already exists." << std::endl;
-            return;
+            return Result::ISBNAlreadyExists;
         }
 
         // Check if a book with the same title already exists (assuming unique titles for simplicity)
@@ -96,7 +131,7 @@ public:
             if (existingBook.title == book.title)
             {
                 std::cout << "A book with the title " << book.title << " already exists." << std::endl;
-                return;
+                return Result::TitleAlreadyExists;
             }
         }
 
@@ -104,12 +139,14 @@ public:
         books[isbn] = book;
         borrowedBooks[isbn] = false; // Initialize as not borrowed
         lruCache.Add(isbn);
-        std::cout << "Added book " << book.isbn << std::endl;
+
+        return Result::BookAdded;
     }
 
     Book *lookupByTitle(const std::string &title)
     {
         std::lock_guard<std::mutex> lock(libraryMutex);
+
         for (const auto &pair : books)
         {
             if (pair.second.title == title)
@@ -117,35 +154,58 @@ public:
                 return &books[pair.first];
             }
         }
+
         return nullptr;
     }
 
     Book *lookupByIsbn(const std::string &isbn)
     {
         std::lock_guard<std::mutex> lock(libraryMutex);
+
         if (books.find(isbn) != books.end())
         {
             return &books[isbn];
         }
+
         return nullptr;
     }
 
-    bool borrowBook(const std::string &isbn)
+    Result borrowBook(const std::string &isbn)
     {
         std::lock_guard<std::mutex> lock(libraryMutex);
-        if (books.find(isbn) != books.end() && !borrowedBooks[isbn])
+
+        if (books.find(isbn) == books.end())
         {
-            borrowedBooks[isbn] = true;
-            lruCache.Increment(isbn);
-            return true;
+            return Result::ISBNMissing;
         }
-        return false;
+
+        if (borrowedBooks[isbn])
+        {
+            return Result::BookBorrowed;
+        }
+
+        borrowedBooks[isbn] = true;
+        lruCache.Increment(isbn);
+
+        return Result::BookBorrowed;
     }
 
-    void returnBook(const std::string &isbn)
+    Result returnBook(const std::string &isbn)
     {
         std::lock_guard<std::mutex> lock(libraryMutex);
+
+        if (books.find(isbn) == books.end())
+        {
+            return Result::ISBNMissing;
+        }
+
+        if (!borrowedBooks[isbn])
+        {
+            return Result::BookNotBorrowed;
+        }
         borrowedBooks[isbn] = false;
+
+        return Result::BookReturned;
     }
 
     void statusReport()
@@ -164,3 +224,4 @@ public:
         std::cout << "Available books: " << books.size() - borrowedCount << std::endl;
     }
 };
+

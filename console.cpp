@@ -17,8 +17,15 @@ void addBook(BookLibrary &library)
     std::cin >> year;
     std::cin.ignore(); // Ignore remaining newline character
 
-    library.addBook(Book(title, author, isbn, year));
-    std::cout << "Book added successfully" << std::endl;
+    auto res = library.addBook(Book(title, author, isbn, year));
+    if (res == Result::BookAdded)
+    {
+        std::cout << "Book " << isbn << " added successfully" << std::endl;
+    }
+    else
+    {
+        std::cout << "Error " << isbn << ResultToString(res) << std::endl;
+    }
 }
 
 void borrowBook(BookLibrary &library)
@@ -27,18 +34,16 @@ void borrowBook(BookLibrary &library)
     std::cout << "Enter ISBN of the book to borrow: ";
     std::getline(std::cin, isbn);
 
-    Book *book = library.lookupByIsbn(isbn);
-    if (!book)
+    auto res = library.borrowBook(isbn);
+    if (res == Result::BookBorrowed)
     {
-        std::cout << "No book found with the given ISBN." << std::endl;
+        std::cout << "Borrowed book: " << isbn << std::endl;
         return;
     }
-    if (!library.borrowBook(isbn))
+    else
     {
-        std::cout << "Failed to borrow the book (maybe it's already borrowed)." << std::endl;
-        return;
+        std::cout << "Error " << isbn << ResultToString(res) << std::endl;
     }
-    std::cout << "Borrowed book: " << book->title << std::endl;
 }
 
 void returnBook(BookLibrary &library)
@@ -47,19 +52,15 @@ void returnBook(BookLibrary &library)
     std::cout << "Enter ISBN of the book to return: ";
     std::getline(std::cin, isbn);
 
-    Book *book = library.lookupByIsbn(isbn);
-    if (!book)
+    auto res = library.returnBook(isbn);
+    if (res == Result::BookReturned)
     {
-        std::cout << "No book found with the ISBN " << isbn << std::endl;
-        return;
+        std::cout << "Returned book: " << isbn << std::endl;
     }
-    if (!library.borrowBook(isbn))
+    else
     {
-        std::cout << "The book: " << book->title << " isn't borrowed" << std::endl;
-        return;
+        std::cout << "Error " << isbn << ResultToString(res) << std::endl;
     }
-
-    std::cout << "Return book: " << isbn << std::endl;
 }
 
 void printMenu()
