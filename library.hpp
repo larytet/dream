@@ -72,6 +72,7 @@ public:
     {
         std::lock_guard<std::mutex> lock(libraryMutex);
         books.erase(isbn);
+        borrowedBooks.erase(isbn);
     }
 
     Book *lookupByTitle(const std::string &title)
