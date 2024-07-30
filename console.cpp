@@ -2,35 +2,90 @@
 #include <thread>
 #include "library.hpp"
 
-void librarianActions(BookLibrary& library) {
-    library.addBook(Book("The Catcher in the Rye", "J.D. Salinger", "1234567890", 1951));
-    library.addBook(Book("To Kill a Mockingbird", "Harper Lee", "2345678901", 1960));
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-    library.removeBook("2345678901");
+void addBook(BookLibrary &library)
+{
+    std::string title, author, isbn;
+    int year;
+
+    std::cout << "Enter book title: ";
+    std::getline(std::cin, title);
+    std::cout << "Enter book author: ";
+    std::getline(std::cin, author);
+    std::cout << "Enter book ISBN: ";
+    std::getline(std::cin, isbn);
+    std::cout << "Enter book publication year: ";
+    std::cin >> year;
+    std::cin.ignore(); // Ignore remaining newline character
+
+    library.addBook(Book(title, author, isbn, year));
+    std::cout << "Book added successfully.\n";
 }
 
-void subscriberActions(BookLibrary& library) {
-    Book* book = library.lookupByIsbn("1234567890");
-    if (book) {
+void subscribeToLibrary(BookLibrary &library)
+{
+    std::string isbn;
+    std::cout << "Enter ISBN of the book to subscribe: ";
+    std::getline(std::cin, isbn);
+
+    Book *book = library.lookupByIsbn(isbn);
+    if (book)
+    {
         std::cout << "Found book: " << book->title << " by " << book->author << std::endl;
-        if (library.borrowBook("1234567890")) {
+        if (library.borrowBook(isbn))
+        {
             std::cout << "Borrowed book: " << book->title << std::endl;
         }
+        else
+        {
+            std::cout << "Failed to borrow the book (maybe it's already borrowed).\n";
+        }
     }
-    std::this_thread::sleep_for(std::chrono::seconds(2));
-    library.returnBook("1234567890");
+    else
+    {
+        std::cout << "No book found with the given ISBN.\n";
+    }
 }
 
-int main() {
+void printMenu()
+{
+    std::cout << "\nMenu:\n";
+    std::cout << "1. Add Book\n";
+    std::cout << "2. Subscribe (Borrow Book)\n";
+    std::cout << "3. Exit\n";
+    std::cout << "Enter your choice: ";
+}
+
+int main()
+{
     BookLibrary library(10);
 
-    std::thread librarian(librarianActions, std::ref(library));
-    std::thread subscriber(subscriberActions, std::ref(library));
+    while (true)
+    {
+        printMenu();
 
-    librarian.join();
-    subscriber.join();
+        int choice;
+        std::cin >> choice;
+        std::cin.ignore(); // Ignore remaining newline character
 
-    library.statusReport();
+        switch (choice)
+        {
+        case 1:
+            addBook(library);
+            break;
+        case 2:
+            subscribeToLibrary(library);
+            break;
+        case 3:
+            std::cout << "Exiting...\n";
+            library.stopBookSweep();
+            return 0;
+        default:
+            std::cout << "Invalid choice. Please try again.\n";
+        }
+
+        // Print the status report after each action
+        library.statusReport();
+    }
 
     return 0;
 }
