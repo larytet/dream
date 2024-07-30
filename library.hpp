@@ -160,7 +160,7 @@ public:
         return Result::Value::BookAdded;
     }
 
-    Book *lookupByTitle(const std::string &title)
+    const Book *lookupByTitle(const std::string &title)
     {
         std::lock_guard<std::mutex> lock(libraryMutex);
 
@@ -175,7 +175,7 @@ public:
         return nullptr;
     }
 
-    Book *lookupByIsbn(const std::string &isbn)
+    const Book *lookupByIsbn(const std::string &isbn)
     {
         std::lock_guard<std::mutex> lock(libraryMutex);
 
