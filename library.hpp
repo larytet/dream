@@ -34,13 +34,15 @@ private:
     size_t capacity;
     std::atomic<bool> stopFlag; // Atomic flag to signal stopping
 
-    void bookSweep() {
-        while (!stopFlag) {
+    void bookSweep()
+    {
+        while (!stopFlag)
+        {
             std::unique_lock<std::mutex> lock(libraryMutex);
             // Wait for the condition to be true or timeout
-            if (cv.wait_for(lock, std::chrono::seconds(1), [this] {
-                return books.size() > capacity;
-            })) {
+            if (cv.wait_for(lock, std::chrono::seconds(1), [this]
+                            { return books.size() > capacity; }))
+            {
                 // Condition met, remove least popular book
             }
         }
