@@ -1,21 +1,23 @@
 #include <gtest/gtest.h>
-#include "../lruCache.hpp"  // Include your LRUCache implementation
+#include "../lruCache.hpp"
 
-// Test suite for LRUCache
+using namespace std;
+
 template<typename KeyType>
 class LRUCacheTest : public ::testing::Test {
 protected:
     LRUCache<KeyType> cache;
 };
 
-// Test case for adding and retrieving items
-TEST_F(LRUCacheTest<std::string>, AddAndRetrieveItem) {
+// Explicit instantiation for std::string
+using StringLRUCacheTest = LRUCacheTest<std::string>;
+
+TEST_F(StringLRUCacheTest, AddAndRetrieveItem) {
     cache.Add("key1");
     EXPECT_EQ(cache.GetLeastUsed(), "key1");
 }
 
-// Test case for incrementing usage and getting the least used item
-TEST_F(LRUCacheTest<std::string>, IncrementUsage) {
+TEST_F(StringLRUCacheTest, IncrementUsage) {
     cache.Add("key1");
     cache.Add("key2");
     cache.Increment("key1");
@@ -30,8 +32,7 @@ TEST_F(LRUCacheTest<std::string>, IncrementUsage) {
     EXPECT_EQ(cache.GetLeastUsed(), "key1");
 }
 
-// Test case for removing an item
-TEST_F(LRUCacheTest<std::string>, RemoveItem) {
+TEST_F(StringLRUCacheTest, RemoveItem) {
     cache.Add("key1");
     cache.Add("key2");
     cache.Remove("key1");
@@ -44,19 +45,16 @@ TEST_F(LRUCacheTest<std::string>, RemoveItem) {
     EXPECT_THROW(cache.GetLeastUsed(), std::runtime_error);
 }
 
-// Test case for handling non-existent items
-TEST_F(LRUCacheTest<std::string>, IncrementNonExistentItem) {
+TEST_F(StringLRUCacheTest, IncrementNonExistentItem) {
     cache.Add("key1");
     EXPECT_THROW(cache.Increment("key2"), std::runtime_error);
 }
 
-TEST_F(LRUCacheTest<std::string>, RemoveNonExistentItem) {
+TEST_F(StringLRUCacheTest, RemoveNonExistentItem) {
     cache.Add("key1");
     EXPECT_THROW(cache.Remove("key2"), std::runtime_error);
 }
 
-// Test case for empty cache
-TEST_F(LRUCacheTest<std::string>, EmptyCache) {
+TEST_F(StringLRUCacheTest, EmptyCache) {
     EXPECT_THROW(cache.GetLeastUsed(), std::runtime_error);
 }
-
