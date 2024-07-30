@@ -49,3 +49,12 @@ A `BookLibrary` should:
 ```bash
 g++ console.cpp -o console
 ```
+
+
+# Unitest 
+
+```bash
+cd test
+camke .
+cmake --build .;./LRUCacheTest
+```

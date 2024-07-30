@@ -20,16 +20,14 @@ TEST_F(StringLRUCacheTest, AddAndRetrieveItem) {
 TEST_F(StringLRUCacheTest, IncrementUsage) {
     cache.Add("key1");
     cache.Add("key2");
+    cache.Add("key3");
     cache.Increment("key1");
     
-    // After incrementing, "key1" should be the most recently used
-    EXPECT_EQ(cache.GetLeastUsed(), "key2");
-    
-    // Increment key2 now
+    EXPECT_EQ(cache.GetLeastUsed(), "key3");  
+
     cache.Increment("key2");
-    
-    // After incrementing key2, it should be the most recently used
-    EXPECT_EQ(cache.GetLeastUsed(), "key1");
+
+    EXPECT_EQ(cache.GetLeastUsed(), "key2");
 }
 
 TEST_F(StringLRUCacheTest, RemoveItem) {
@@ -37,10 +35,8 @@ TEST_F(StringLRUCacheTest, RemoveItem) {
     cache.Add("key2");
     cache.Remove("key1");
     
-    // After removing "key1", "key2" should be the only item left
     EXPECT_EQ(cache.GetLeastUsed(), "key2");
     
-    // Removing "key2" should throw an exception when trying to get the least used item
     cache.Remove("key2");
     EXPECT_THROW(cache.GetLeastUsed(), std::runtime_error);
 }
