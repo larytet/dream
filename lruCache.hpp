@@ -36,6 +36,7 @@ public:
     // Remove a key from the cache
     void Remove(const KeyType& key) {
         std::lock_guard<std::mutex> lock(mutex);
+
         auto it = cacheMap.find(key);
         if (it == cacheMap.end()) {
             throw std::runtime_error("Key not found");
@@ -63,7 +64,7 @@ private:
     std::list<KeyType> list; // List to maintain LRU order
     std::unordered_map<KeyType, CacheItem> cacheMap; // Map to store key information
 
-    // Used in a constant method GetLeastUsed()
+    // Used in a constant method GetLeastUsed() thus mutable
     mutable std::mutex mutex;
 };
 
