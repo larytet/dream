@@ -42,3 +42,10 @@ A `BookLibrary` should:
 - You may change the above class definitions to create additional/different abstractions, as you find suitable, as long as the use-cases are supported.
 - Be mindful of memory management, ownership and synchronization.
 - Document your code and any design or implementation decision you find worthy.
+
+
+# Build
+
+```bash
+g++ console.cpp -o console
+```
