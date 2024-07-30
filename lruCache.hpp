@@ -47,7 +47,8 @@ public:
         // Add the new key to the end of the list
         auto listIt = list.insert(list.end(), key);
 
-        // Store the iterator returned by insert in the cacheMap, initial usage count is 0
+        // Store the iterator returned by insert in the cacheMap
+        // initial usage count is 0
         cacheMap[key] = {0, listIt};
     }
 
