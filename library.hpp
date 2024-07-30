@@ -139,8 +139,11 @@ public:
 
         // Add the book to the library
         books[isbn] = book;
-        borrowedBooks[isbn] = false; // Initialize as not borrowed
+        borrowedBooks[isbn] = false;
         lruCache.Add(isbn);
+
+        // Trigger the sweep
+        cv.notify_one();
 
         return Result::BookAdded;
     }

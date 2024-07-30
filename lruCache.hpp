@@ -28,7 +28,7 @@ public:
         // Update the iterator in cacheMap
         it->second.listIterator = list.begin();
 
-        // Increment the usage count
+        // Bookkeeping Increment the usage count
         it->second.usageCount++;
     }
 
