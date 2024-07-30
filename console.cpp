@@ -51,7 +51,8 @@ void printMenu()
     std::cout << std::endl<< "Menu:"<< std::endl;
     std::cout << "1. Add Book"<< std::endl;
     std::cout << "2. Subscribe (Borrow Book)"<< std::endl;
-    std::cout << "3. Exit"<< std::endl;
+    std::cout << "3. Report"<< std::endl;
+    std::cout << "4. Exit"<< std::endl;
     std::cout << "Enter your choice: ";
 }
 
@@ -76,15 +77,15 @@ int main()
             borrowBook(library);
             break;
         case 3:
+            library.statusReport();
+            break;
+        case 4:
             std::cout << "Exiting..." << std::endl;
             library.stopSweep();
             return 0;
         default:
             std::cout << "Invalid choice. Please try again" <<std::endl;
         }
-
-        // Print the status report after each action
-        library.statusReport();
     }
 
     return 0;

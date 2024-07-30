@@ -59,6 +59,13 @@ private:
         }
     }
 
+    void removeBook(const std::string &isbn)
+    {
+        books.erase(isbn);
+        borrowedBooks.erase(isbn);
+        lruCache.Remove(isbn);
+    }
+
 public:
     BookLibrary(size_t cap) : capacity(cap), stopFlag(false)
     {
@@ -73,7 +80,6 @@ public:
 
     void addBook(const Book &book)
     {
-        std::cout << "Adding book " << book.isbn<< std::endl;
         std::lock_guard<std::mutex> lock(libraryMutex);
         auto isbn = book.isbn;
 
@@ -97,15 +103,8 @@ public:
         // Add the book to the library
         books[isbn] = book;
         borrowedBooks[isbn] = false; // Initialize as not borrowed
+        lruCache.Add(isbn);
         std::cout << "Added book " << book.isbn<< std::endl;
-    }
-
-    void removeBook(const std::string &isbn)
-    {
-        std::cout << "Removing: " << isbn<< std::endl;
-        std::lock_guard<std::mutex> lock(libraryMutex);
-        books.erase(isbn);
-        borrowedBooks.erase(isbn);
     }
 
     Book *lookupByTitle(const std::string &title)
@@ -137,6 +136,7 @@ public:
         if (books.find(isbn) != books.end() && !borrowedBooks[isbn])
         {
             borrowedBooks[isbn] = true;
+            lruCache.Increment(isbn);
             return true;
         }
         return false;
