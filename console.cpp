@@ -24,7 +24,7 @@ void addBook(BookLibrary &library)
     }
     else
     {
-        std::cout << "Error " << isbn << ResultToString(res) << std::endl;
+        std::cout << "Error " << isbn << " " << ResultToString(res) << std::endl;
     }
 }
 
@@ -42,7 +42,7 @@ void borrowBook(BookLibrary &library)
     }
     else
     {
-        std::cout << "Error " << isbn << ResultToString(res) << std::endl;
+        std::cout << "Error " << isbn << " " << ResultToString(res) << std::endl;
     }
 }
 
@@ -59,7 +59,7 @@ void returnBook(BookLibrary &library)
     }
     else
     {
-        std::cout << "Error " << isbn << ResultToString(res) << std::endl;
+        std::cout << "Error " << isbn << " " << ResultToString(res) << std::endl;
     }
 }
 

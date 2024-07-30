@@ -36,7 +36,6 @@ enum class Result
     ISBNMissing,
 };
 
-
 static std::string ResultToString(Result result)
 {
     switch (result)
@@ -224,4 +223,3 @@ public:
         std::cout << "Available books: " << books.size() - borrowedCount << std::endl;
     }
 };
-
