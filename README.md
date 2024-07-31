@@ -58,3 +58,12 @@ cd test
 cmake .
 cmake --build .;gdb ./LRUCacheTest
 ```
+
+
+# Code review 
+
+
+-  The spawned thread holds a dangling `this` pointer and the thread is detached, which can crash the program if the class destructs before the thread exits.
+-  The lookup APIs return raw pointer to the Book class, which is not thread-safe if the book is removed in another thread and can also lead to a crash.
+-  Lookup operation takes O(n). The exercise states that borrowing a book is a frequently operation, but looking up a book is required to translate title to ISBN before borrowing.
+-  std::move wasn't used where appropriate, for example in the Book constructor.
