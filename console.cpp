@@ -69,19 +69,20 @@ void findBook(BookLibrary &library)
     std::cout << "Enter ISBN or title of the book: ";
     std::getline(std::cin, key);
 
-    auto book = library.lookupByIsbn(key);
-    if (book == nullptr)
+    Book book;
+    bool ok = library.lookupByIsbn(key, &book);
+    if (!ok)
     {
-        book = library.lookupByTitle(key);
+        ok = library.lookupByTitle(key, &book);
     }
 
-    if (book == nullptr)
+    if (!ok)
     {
         std::cout << "Book not found: " << key << std::endl;
         return;
     }
 
-    std::cout << "Book found: ISBN " << book->isbn << ", Title " << book->title << std::endl;
+    std::cout << "Book found: ISBN " << book.isbn << ", Title " << book.title << std::endl;
 }
 
 void printMenu()

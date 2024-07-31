@@ -66,13 +66,12 @@ namespace Result
     }
 
     // Overload the << operator to output Result directly to std::ostream
-    std::ostream& operator<<(std::ostream& os, const Value& value)
+    std::ostream &operator<<(std::ostream &os, const Value &value)
     {
         os << ToString(value);
         return os;
     }
 }
-
 
 class BookLibrary
 {
@@ -160,7 +159,7 @@ public:
         return Result::Value::BookAdded;
     }
 
-    const Book *lookupByTitle(const std::string &title)
+    const bool lookupByTitle(const std::string &title, Book *book)
     {
         std::lock_guard<std::mutex> lock(libraryMutex);
 
@@ -168,23 +167,25 @@ public:
         {
             if (pair.second.title == title)
             {
-                return &books[pair.first];
+                *book = books[pair.first];
+                return true;
             }
         }
 
-        return nullptr;
+        return false;
     }
 
-    const Book *lookupByIsbn(const std::string &isbn)
+    const bool lookupByIsbn(const std::string &isbn, Book *book)
     {
         std::lock_guard<std::mutex> lock(libraryMutex);
 
         if (books.find(isbn) != books.end())
         {
-            return &books[isbn];
+            *book = books[isbn];
+            return true;
         }
 
-        return nullptr;
+        return false;
     }
 
     Result::Value borrowBook(const std::string &isbn)
