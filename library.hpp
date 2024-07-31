@@ -171,6 +171,7 @@ public:
 
     const bool lookupByTitle(const std::string &title, Book *book)
     {
+        // Todo: Add a cache speeding up frequent searches. Can be an LRU as well.
         std::lock_guard<std::mutex> lock(libraryMutex);
 
         for (const auto &pair : books)
