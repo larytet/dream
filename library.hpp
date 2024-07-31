@@ -22,7 +22,7 @@ public:
 
     Book() {}
     Book(std::string t, std::string a, std::string i, int y)
-        : title(t), author(a), isbn(i), publishedYear(y) {}
+        : title(std::move(t)), author(std::move(a)), isbn(std::move(i)), publishedYear(y) {}
 };
 
 namespace Result
