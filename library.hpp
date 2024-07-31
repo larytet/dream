@@ -82,6 +82,7 @@ private:
     std::condition_variable cv;
     size_t capacity;
     std::atomic<bool> stopFlag; // Atomic flag to signal stopping
+    std::atomic<bool> stopped;  // Atomic flag to signal that the cleanup is completed
     LRUCache<std::string> lruCache;
 
     void sweep()
@@ -96,6 +97,9 @@ private:
                 removeLeastPopularBooks();
             }
         }
+
+        stopped = true;
+        cv.notify_all();
     }
 
     void removeLeastPopularBooks()
@@ -120,6 +124,14 @@ public:
         std::thread(&BookLibrary::sweep, this).detach();
     }
 
+    ~BookLibrary()
+    {
+        stopFlag = true;
+        std::unique_lock<std::mutex> lock(libraryMutex);
+        cv.wait(lock, [this]
+                { return stopped.load(); });
+    }
+
     void stopSweep()
     {
         // Signal the thread to stop
@@ -134,7 +146,6 @@ public:
         // Check if the book with the same ISBN already exists
         if (books.find(isbn) != books.end())
         {
-            std::cout << "A book with the " << isbn << " already exists." << std::endl;
             return Result::Value::ISBNAlreadyExists;
         }
 
@@ -143,7 +154,6 @@ public:
         {
             if (existingBook.title == book.title)
             {
-                std::cout << "A book with the title " << book.title << " already exists." << std::endl;
                 return Result::Value::TitleAlreadyExists;
             }
         }

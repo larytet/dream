@@ -129,7 +129,6 @@ int main()
             break;
         case 6:
             std::cout << "Exiting..." << std::endl;
-            library.stopSweep();
             return 0;
         default:
             std::cout << "Invalid choice. Please try again" << std::endl;
