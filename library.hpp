@@ -84,6 +84,7 @@ private:
     std::atomic<bool> stopFlag; // Atomic flag to signal stopping
     std::atomic<bool> stopped;  // Atomic flag to signal that the cleanup is completed
     LRUCache<std::string> lruCache;
+    std::unordered_map<std::string, std::string> titleToIsbnCache;
 
     void sweep()
     {
@@ -116,6 +117,17 @@ private:
         books.erase(isbn);
         borrowedBooks.erase(isbn);
         lruCache.Remove(isbn);
+    }
+
+    const bool lookupByIsbnUnsafe(const std::string &isbn, Book *book)
+    {
+        if (books.find(isbn) != books.end())
+        {
+            *book = books[isbn];
+            return true;
+        }
+
+        return false;
     }
 
 public:
@@ -171,32 +183,29 @@ public:
 
     const bool lookupByTitle(const std::string &title, Book *book)
     {
-        // Todo: Add a cache speeding up frequent searches. Can be an LRU as well.
         std::lock_guard<std::mutex> lock(libraryMutex);
+        auto cacheIt = titleToIsbnCache.find(title);
+        if (cacheIt != titleToIsbnCache.end())
+        {
+            return lookupByIsbnUnsafe(cacheIt->second, book);
+        }
 
         for (const auto &pair : books)
         {
             if (pair.second.title == title)
             {
-                *book = books[pair.first];
+                *book = pair.second;
+                titleToIsbnCache[title] = pair.first;
                 return true;
             }
         }
-
         return false;
     }
 
     const bool lookupByIsbn(const std::string &isbn, Book *book)
     {
         std::lock_guard<std::mutex> lock(libraryMutex);
-
-        if (books.find(isbn) != books.end())
-        {
-            *book = books[isbn];
-            return true;
-        }
-
-        return false;
+        return lookupByIsbnUnsafe(isbn, book);
     }
 
     Result::Value borrowBook(const std::string &isbn)
